@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+data/enrolled_faces/
+data/attendance.csv
+data/trainer.yml
+data/user_mapping.json
+
+static/reports/
