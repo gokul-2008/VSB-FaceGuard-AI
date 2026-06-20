@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSB FaceGuard AI</title>
+    <!-- Google Fonts: Inter and Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="logo-icon-wrapper">
+                    <i class="fa-solid fa-shield-halved brand-logo-icon"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>VSB FaceGuard AI<span class="ai-badge">AI ENGINE v2.0</span></h1>
+                    <p>Secured Presentation Attack Detection & Biometrics</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator active" id="sys-status">
+                    <span class="pulse-dot"></span>
+                    <span class="status-label">System Active</span>
+                </div>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Statistics Cards Grid -->
+        <section class="stats-overview-grid">
+            <div class="stat-card">
+                <div class="stat-icon-container blue-accent">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Verifications</span>
+                    <h2 class="stat-value" id="stat-total">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-container green-accent">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Registered Profiles</span>
+                    <h2 class="stat-value" id="stat-registered">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-container emerald-accent">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Live Verifications</span>
+                    <h2 class="stat-value" id="stat-live">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-container red-accent">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Spoof Intercepted</span>
+                    <h2 class="stat-value" id="stat-spoof">0</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Side: Webcam Panel -->
+            <section class="panel camera-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-camera"></i> Live Verification Stream</h2>
+                    <span class="camera-stream-badge"><span class="live-blink"></span> Camera Feed</span>
+                </div>
+                
+                <div class="video-outer-container">
+                    <div class="video-container">
+                        <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Webcam Feed">
+                        
+                        <div class="video-overlay">
+                            <!-- Laser Scanning Animation Line -->
+                            <div class="scanner-laser-line"></div>
+                            
+                            <!-- Scanning Focus Corners -->
+                            <div class="scanning-corners">
+                                <span class="corner corner-tl"></span>
+                                <span class="corner corner-tr"></span>
+                                <span class="corner corner-bl"></span>
+                                <span class="corner corner-br"></span>
+                            </div>
+
+                            <!-- Floating AI Face Tracking Badge -->
+                            <div class="ai-tracking-indicator">
+                                <i class="fa-solid fa-compress fa-spin-pulse"></i>
+                                <span>AI TRACKING ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="camera-actions">
+                    <button id="btn-reset" class="btn btn-primary btn-glow-purple">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Liveness Check
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Side: Metrics, Recognition & Logs -->
+            <div class="right-column-grid">
+                
+                <!-- Status Banner & Challenge Checklist -->
+                <section class="panel metrics-panel">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-chart-column"></i> Verification Metrics</h2>
+                    </div>
+
+                    <!-- Glowing Status Banner -->
+                    <div id="liveness-banner" class="status-banner-badge pending">
+                        <div class="banner-icon-badge">
+                            <i id="banner-icon" class="fa-solid fa-circle-notch fa-spin"></i>
+                        </div>
+                        <div class="banner-text-content">
+                            <h3 id="liveness-title">VERIFYING AUTHENTICITY</h3>
+                            <p id="liveness-desc">Analyzing bio-features in real time</p>
+                        </div>
+                        <div class="banner-timer" id="timer-val">10.0s</div>
+                    </div>
+
+                    <!-- Central metrics section combining metric cards & circular progress gauge -->
+                    <div class="metrics-visuals-row">
+                        
+                        <!-- Circular Gauge for Spoof Score -->
+                        <div class="circular-gauge-wrapper">
+                            <div class="radial-ring-container">
+                                <svg class="progress-ring" width="110" height="110">
+                                    <circle class="progress-ring__background" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="48" cx="55" cy="55"/>
+                                    <circle class="progress-ring__circle" id="spoof-progress-circle" stroke="var(--danger)" stroke-width="8" fill="transparent" r="48" cx="55" cy="55" stroke-dasharray="301.59" stroke-dashoffset="301.59"/>
+                                </svg>
+                                <div class="gauge-center-text">
+                                    <span id="val-spoof-gauge" class="gauge-number">0%</span>
+                                    <span class="gauge-label">Spoof</span>
+                                </div>
+                            </div>
+                            <span class="gauge-caption">Threat Index</span>
+                        </div>
+
+                        <!-- Mini metrics details grid -->
+                        <div class="mini-metrics-details">
+                            <div class="mini-metric-item" id="card-face">
+                                <span class="metric-dot"></span>
+                                <span class="lbl">Face Detected:</span>
+                                <span class="val" id="val-face">No</span>
+                            </div>
+                            <div class="mini-metric-item" id="card-blink">
+                                <span class="metric-dot"></span>
+                                <span class="lbl">Blinks count:</span>
+                                <span class="val" id="val-blinks">0</span>
+                            </div>
+                            <div class="mini-metric-item" id="card-smile">
+                                <span class="metric-dot"></span>
+                                <span class="lbl">Smile check:</span>
+                                <span class="val" id="val-smile">No</span>
+                            </div>
+                            <div class="mini-metric-item" id="card-spoof">
+                                <span class="metric-dot"></span>
+                                <span class="lbl">Spoof Score:</span>
+                                <span class="val" id="val-spoof">0%</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Checklist -->
+                    <div class="checklist-container">
+                        <h3>Required Challenges</h3>
+                        <div class="checklist-items-stack">
+                            <div class="challenge-item" id="check-blink">
+                                <i class="fa-regular fa-circle checkbox-icon"></i>
+                                <span>Blink eyelids (register EAR compression)</span>
+                            </div>
+                            <div class="challenge-item" id="check-left">
+                                <i class="fa-regular fa-circle checkbox-icon"></i>
+                                <span>Rotate head Left (verify 3D perspective)</span>
+                            </div>
+                            <div class="challenge-item" id="check-right">
+                                <i class="fa-regular fa-circle checkbox-icon"></i>
+                                <span>Rotate head Right (verify 3D perspective)</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Biometric Recognition Section -->
+                <section class="panel profile-recog-panel">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-id-card"></i> Identity Verification</h2>
+                    </div>
+
+                    <!-- Premium Identity Profile Card -->
+                    <div class="profile-card">
+                        <div class="profile-avatar-scanner">
+                            <div class="avatar-glow"></div>
+                            <i class="fa-solid fa-fingerprint fingerprint-avatar-icon"></i>
+                            <div class="scanner-bar"></div>
+                        </div>
+                        <div class="profile-meta">
+                            <span class="meta-label">IDENTIFIED PROFILE</span>
+                            <h3 id="recognized-identity" class="meta-name">Unknown</h3>
+                            <div class="meta-confidence-badge" id="recog-conf-badge">
+                                <i class="fa-solid fa-bullseye"></i> <span id="recognized-conf">0% Match</span>
+                            </div>
+                        </div>
+                        <div class="verification-badge unverified" id="recog-status-badge">
+                            Unverified
+                        </div>
+                    </div>
+
+                    <!-- Enrollment Form Area -->
+                    <div class="enroll-section">
+                        <h4>Enroll New Secure Profile</h4>
+                        <form id="enroll-form" onsubmit="event.preventDefault(); enrollUser();" class="modern-input-group">
+                            <input type="text" id="enroll-name" placeholder="Full Name (e.g., John Doe)" required>
+                            <button type="submit" class="btn btn-secondary btn-enroll-action">
+                                <i class="fa-solid fa-plus-circle"></i> Enroll Face
+                            </button>
+                        </form>
+                        <div id="enrollment-status" class="enrollment-msg-info"></div>
+                    </div>
+                </section>
+
+                <!-- Premium Export Report Section -->
+                <section class="panel export-report-panel">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-file-pdf"></i> Audit Report Center</h2>
+                    </div>
+                    <div class="report-card-content">
+                        <div class="report-meta-info">
+                            <i class="fa-regular fa-clock clock-icon"></i>
+                            <div>
+                                <span class="report-meta-lbl">Session Audit Log</span>
+                                <p class="report-meta-val" id="report-timestamp">Last generated: Just now</p>
+                            </div>
+                        </div>
+                        <a id="btn-download" href="/download_report" class="btn btn-download-glow">
+                            <i class="fa-solid fa-file-export"></i> Download Verification Report
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Attendance Log Panel -->
+                <section class="panel logs-panel">
+                    <div class="panel-header logs-header-row">
+                        <h2><i class="fa-solid fa-list-check"></i> Verification Logs</h2>
+                        
+                        <!-- Search Box -->
+                        <div class="search-input-wrapper">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="table-search" placeholder="Filter logs...">
+                        </div>
+                    </div>
+
+                    <div class="table-scroll-wrapper">
+                        <table id="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Identity</th>
+                                    <th>Blinks</th>
+                                    <th>Rotations</th>
+                                    <th>Liveness Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-tbody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No verification records loaded</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Dashboard Footer -->
+        <footer class="app-footer">
+            <p><i class="fa-solid fa-circle-nodes"></i> AI-Powered Face Liveness Detection & Recognition System</p>
+            <p>Built using Python Flask, OpenCV, MediaPipe Face Mesh, and Local Binary Patterns Histograms (LBPH)</p>
+        </footer>
+
+    </div>
+
+    <!-- Script Imports -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

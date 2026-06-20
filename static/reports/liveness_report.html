@@ -1,0 +1,73 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Liveness Verification & Attendance Report</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+            .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+            h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
+            .meta-info { margin: 15px 0 25px 0; font-size: 0.9em; color: #7f8c8d; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #3498db; color: white; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .status-live { color: #27ae60; font-weight: bold; }
+            .status-spoof { color: #c0392b; font-weight: bold; }
+            .btn-print { background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; float: right; }
+            .btn-print:hover { background-color: #2980b9; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+            <h1>Liveness & Attendance Report</h1>
+            <div class="meta-info">
+                <strong>Generated on:</strong> 2026-06-16 14:12:59<br>
+                <strong>System status:</strong> ONLINE | SECURE LIVENESS DETECTION ACTIVE
+            </div>
+            
+            <h2>Verification Logs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User Name</th>
+                        <th>Blinks</th>
+                        <th>Head Left</th>
+                        <th>Head Right</th>
+                        <th>Smile</th>
+                        <th>Liveness Status</th>
+                        <th>Authentication</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    <tr>
+                        <td>2026-06-16 09:20:53</td>
+                        <td>Chiranjeevi</td>
+                        <td>1</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td><span class="status-live">LIVE PERSON</span></td>
+                        <td>Recognized</td>
+                    </tr>
+        
+                    <tr>
+                        <td>2026-06-15 18:45:38</td>
+                        <td>Gokul B</td>
+                        <td>1</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td><span class="status-live">LIVE PERSON</span></td>
+                        <td>Recognized</td>
+                    </tr>
+        
+                </tbody>
+            </table>
+        </div>
+    </body>
+    </html>
+    
